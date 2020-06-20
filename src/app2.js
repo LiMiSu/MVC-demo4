@@ -17,9 +17,14 @@ const m = new Model({
 })
 
 // 其他放到C
-const view = {
-    html: (index) => {
-        return `
+const init = (container) => {
+    // const view = new View({//没必要取名字
+    new View({
+        eventBus: eventBus,
+        data: m.data,
+        container: container,
+        html: (index) => {
+            return `
     <div>
         <ol class="tab-bar">
             <li class="${index === 0 ? 'selected' : ''}" data-index="0">1</li>
@@ -31,34 +36,21 @@ const view = {
         </ol>
     </div>
 `
-    },
-    init(container) {
-        view.render(container, m.data.index);
-        view.autoBindEvents(container);
-        eventBus.on('m:update', () => {//点击就更新
-            view.render(container, m.data.index)
-        })
-    },
-    render(container, index) {
-        $(container).empty();
-        $(view.html(index)).appendTo($(container));
-    },
-    events: {
-        'click .tab-bar li': 'add',
-    },
-    add(e) {
-        const index = parseInt(e.currentTarget.dataset.index);
-        const newD = {index:index};
-        m.update(newD);
-    },
-    autoBindEvents(container) {
-        for (let key in view.events) {
-            const spaceIndex = key.indexOf(' ')
-            const part1 = key.slice(0, spaceIndex);
-            const part2 = key.slice(spaceIndex + 1);
-            const value = view[view.events[key]];
-            $(container).on(part1, part2, value);
-        }
-    }
+        },
+        render(container, data) {
+            $(container).empty();
+            $(this.html(this.data.index)).appendTo($(container));
+        },
+        events: {
+            'click .tab-bar li': 'add',
+        },
+        add(e) {
+            const index = parseInt(e.currentTarget.dataset.index);
+            const newD = {index: index};
+            m.update(newD);
+        },
+
+    })
 }
-export default view;
+
+export default init;
