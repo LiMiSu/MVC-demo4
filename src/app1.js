@@ -2,22 +2,22 @@ import './app1.css';
 import $ from 'jquery';
 import Model from "./base/Model.js";
 import View from "./base/View";
+import EventBus from "./base/EventBus";
 
 
-const eventBus = $({});
+// const eventBus = new EventBus();
 //数据相关放到M
 const m = new Model({
     data: {n: parseFloat(localStorage.getItem('n')) || 0},
     update(data) {
         Object.assign(m.data, data);
-        eventBus.trigger('m:update');
+        m.trigger('m:update');
         localStorage.setItem('n', m.data.n.toString())
     }
 })
 // 其他放到C
 const init = (container) => {
     new View({
-        eventBus: eventBus,
         data: m.data,
         container: container,
         html: `

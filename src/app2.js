@@ -2,8 +2,9 @@ import './app2.css';
 import $ from 'jquery';
 import Model from "./base/Model.js";
 import View from "./base/View";
+import EventBus from "./base/EventBus";
 
-const eventBus = $({});
+
 //数据相关放到M
 const m = new Model({
     data: {
@@ -11,7 +12,7 @@ const m = new Model({
     },
     update(data) {
         Object.assign(m.data, data);
-        eventBus.trigger('m:update');
+        m.trigger('m:update');
         localStorage.setItem('index', m.data.index.toString())
     },
 })
@@ -20,7 +21,6 @@ const m = new Model({
 const init = (container) => {
     // const view = new View({//没必要取名字
     new View({
-        eventBus: eventBus,
         data: m.data,
         container: container,
         html: (index) => {
